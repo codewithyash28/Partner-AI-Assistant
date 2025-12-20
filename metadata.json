@@ -1,0 +1,5 @@
+{
+  "name": "Partner AI Assistant",
+  "description": "A hackathon-ready solution architect tool that leverages Gemini AI to generate expert Google Cloud Platform (GCP) recommendations for client business problems.",
+  "requestFramePermissions": []
+}
