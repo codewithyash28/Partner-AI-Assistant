@@ -25,6 +25,7 @@ const getServiceEstimate = (name: string): number => {
 };
 
 const calculateTotalCost = (item: HistoryItem): number => {
+  if (!item.solution.recommendedServices) return 0;
   return item.solution.recommendedServices.reduce((acc, s) => acc + getServiceEstimate(s.name), 0);
 };
 
@@ -72,7 +73,7 @@ const Dashboard: React.FC<DashboardProps> = ({ history, onSelectSolution, onClea
           onClick={onClearHistory}
           className="text-sm font-bold text-red-500 hover:text-red-700 transition-colors"
         >
-          Clear All
+          Clear All History
         </button>
       </div>
 

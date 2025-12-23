@@ -13,6 +13,28 @@ const ObservabilityDashboard: React.FC<ObsDashboardProps> = ({ history, incident
   const totalTokens = history.reduce((acc, h) => acc + h.telemetry.tokensIn + h.telemetry.tokensOut, 0);
   const piiCount = history.filter(h => h.telemetry.isPiiDetected).length;
 
+  const exportDatadogJson = () => {
+    const dashboardExport = {
+      title: "Partner AI Observability Dashboard",
+      widgets: [
+        { definition: { type: "timeseries", title: "Latency (ms)", requests: [{ q: "avg:partner.ai.latency{*}" }] } },
+        { definition: { type: "query_value", title: "Error Rate", requests: [{ q: "sum:partner.ai.errors{*}/sum:partner.ai.requests{*}" }] } },
+        { definition: { type: "toplist", title: "Safety Hits", requests: [{ q: "top(sum:partner.ai.safety_hits{*} by {type}, 10, 'sum', 'desc')" }] } }
+      ],
+      template_variables: [],
+      layout_type: "ordered",
+      description: "Auto-generated export for Google Cloud Partner AI Hackathon"
+    };
+
+    const blob = new Blob([JSON.stringify(dashboardExport, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'datadog-partner-ai-dashboard.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       {/* Simulation Controls */}
@@ -22,6 +44,13 @@ const ObservabilityDashboard: React.FC<ObsDashboardProps> = ({ history, incident
           <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Control Center</span>
         </div>
         <div className="flex space-x-3">
+          <button 
+            onClick={exportDatadogJson} 
+            className="text-[10px] bg-gray-800 hover:bg-gray-700 border border-gray-600 px-3 py-1 rounded-lg transition-all flex items-center"
+          >
+            <i className="fa-solid fa-file-export mr-2"></i>
+            Datadog Export (JSON)
+          </button>
           <button onClick={() => onTriggerSim('LATENCY')} className="text-[10px] bg-red-900/50 hover:bg-red-800 border border-red-700 px-3 py-1 rounded-lg transition-all">Simulate Spike</button>
           <button onClick={() => onTriggerSim('SURGE')} className="text-[10px] bg-blue-900/50 hover:bg-blue-800 border border-blue-700 px-3 py-1 rounded-lg transition-all">Traffic Surge</button>
         </div>
