@@ -43,85 +43,29 @@ const Dashboard: React.FC<DashboardProps> = ({ history, onSelectSolution, onClea
   }
 
   const totalPortfolioValue = history.reduce((acc, item) => acc + calculateTotalCost(item), 0);
+  
+  // Data for the chart (taking last 10 entries for clarity)
+  const chartData = [...history].reverse().slice(-10).map(item => ({
+    label: item.solution.problemSummary,
+    cost: calculateTotalCost(item),
+    id: item.id
+  }));
+
+  const maxCost = Math.max(...chartData.map(d => d.cost), 100);
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Stats Header */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Solutions</p>
-          <p className="text-3xl font-black text-blue-600 mt-1">{history.length}</p>
+      {/* Dashboard Top Header & Stats */}
+      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-blue-600 px-8 py-6 flex flex-col md:flex-row justify-between items-center text-white">
+          <div className="mb-4 md:mb-0">
+            <h2 className="text-2xl font-black uppercase tracking-tight">Portfolio Summary</h2>
+            <p className="text-blue-100 text-sm font-medium">Historical Architecture Repository</p>
+          </div>
+          <div className="text-center md:text-right">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-200 mb-1">Total Estimated Monthly Cost</p>
+            <p className="text-4xl font-black tracking-tighter">${totalPortfolioValue.toLocaleString()}</p>
+          </div>
         </div>
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Est. Monthly Footprint</p>
-          <p className="text-3xl font-black text-green-600 mt-1">
-            ${totalPortfolioValue.toLocaleString()}
-          </p>
-        </div>
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Recent Project</p>
-          <p className="text-lg font-bold text-gray-900 mt-2 truncate">
-            {history[0].solution.problemSummary}
-          </p>
-        </div>
-      </div>
-
-      {/* History Grid */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-gray-900">Recent Architecture Projects</h2>
-        <button 
-          onClick={onClearHistory}
-          className="text-sm font-bold text-red-500 hover:text-red-700 transition-colors"
-        >
-          Clear All History
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {history.map((item) => {
-          const estimatedCost = calculateTotalCost(item);
-          return (
-            <div 
-              key={item.id}
-              onClick={() => onSelectSolution(item)}
-              className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all cursor-pointer overflow-hidden flex flex-col"
-            >
-              <div className="p-6 flex-grow">
-                <div className="flex justify-between items-start mb-4">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
-                    {new Date(item.timestamp).toLocaleDateString()}
-                  </span>
-                  <div className="bg-green-50 text-green-700 text-[10px] font-black px-2 py-0.5 rounded-full border border-green-100">
-                    EST. ${estimatedCost}/MO
-                  </div>
-                </div>
-                <h4 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 leading-tight">
-                  {item.solution.problemSummary}
-                </h4>
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {item.solution.recommendedServices.slice(0, 3).map((s, idx) => (
-                    <span key={idx} className="px-2 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded uppercase">
-                      {s.name}
-                    </span>
-                  ))}
-                  {item.solution.recommendedServices.length > 3 && (
-                    <span className="px-2 py-1 bg-gray-50 text-gray-400 text-[10px] font-bold rounded">
-                      +{item.solution.recommendedServices.length - 3} more
-                    </span>
-                  )}
-                </div>
-              </div>
-              <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 group-hover:bg-blue-50 transition-colors">
-                <p className="text-xs text-gray-500 line-clamp-1 italic">
-                  "{item.problemDescription}"
-                </p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
-
-export default Dashboard;
+        
+        <div className="grid grid-cols-1 md:grid-
