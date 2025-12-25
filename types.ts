@@ -17,12 +17,14 @@ export interface TelemetryData {
   latencyMs: number;
   tokensIn: number;
   tokensOut: number;
+  costUsd: number;
   model: string;
   timestamp: number;
   safetyFlags: string[];
   hallucinationScore: number; // 0-1
   driftScore: number; // 0-1
   isPiiDetected: boolean;
+  userHash: string;
 }
 
 export interface HistoryItem {
@@ -35,7 +37,7 @@ export interface HistoryItem {
 
 export interface Incident {
   id: string;
-  type: 'LATENCY' | 'ERROR_RATE' | 'SAFETY' | 'DRIFT' | 'HALLUCINATION';
+  type: 'LATENCY' | 'ERROR_RATE' | 'SAFETY' | 'DRIFT' | 'HALLUCINATION' | 'BURN_RATE';
   severity: 'CRITICAL' | 'WARNING' | 'INFO';
   message: string;
   timestamp: number;
